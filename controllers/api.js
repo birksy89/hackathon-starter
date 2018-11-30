@@ -424,8 +424,8 @@ exports.postTwilio = (req, res, next) => {
   }
 
   const message = {
-    to: req.body.number,
-    from: '+13472235148',
+    to: 'whatsapp:+447799061149' ,
+    from: 'whatsapp:+14155238886',      
     body: req.body.message
   };
   twilio.messages.create(message).then((sentMessage) => {
