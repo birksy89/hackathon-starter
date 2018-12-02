@@ -1,8 +1,8 @@
 const puppeteer = require("puppeteer");
 const cloudinary = require("cloudinary");
 const twilio = require("twilio")(
-  "AC8f9efa9754e44d893b46b0f605822667",
-  "b472e8159e3e23add20b45916297cced"
+  process.env.TWILIO_SID,
+  process.env.TWILIO_TOKEN
 );
 
 cloudinary.config({
@@ -11,7 +11,13 @@ cloudinary.config({
   api_secret: "4VuxM6M8c7LBZ3wHjqOXItJAb_o"
 });
 
-(async () => {
+//Trialing out schedule work
+var schedule = require("node-schedule");
+var j = schedule.scheduleJob("42 * * * * *", function() {
+  module.exports.getCollectionDates();
+});
+
+exports.getCollectionDates = async () => {
   const browser = await puppeteer.launch({
     //headless: false
   });
@@ -46,7 +52,7 @@ cloudinary.config({
 
   const RESULTS = await page.$("#detailsDisplay");
 
-  const SCREENSHOT_PATH = `../public/${UPRN}-${Date.now()}.png`;
+  const SCREENSHOT_PATH = `${__dirname}/../public/${UPRN}-${Date.now()}.png`;
 
   await RESULTS.screenshot({ path: SCREENSHOT_PATH });
 
@@ -69,13 +75,22 @@ cloudinary.config({
 
   console.log(cloudinaryUpload.secure_url);
 
+  //WhatsApp Message
+  // const message = {
+  //   to: "whatsapp:+447799061149",
+  //   from: "whatsapp:+14155238886",
+  //   body: `New Recycling Message...`,
+  //   mediaUrl: cloudinaryUpload.secure_url
+  // };
+
   const message = {
-    to: "whatsapp:+447799061149",
-    from: "whatsapp:+14155238886",
-    body: `New Recycling Message...`,
-    mediaUrl: cloudinaryUpload.secure_url
+    to: "+447799061149",
+    from: "+441325952196",
+    body: `New Recycling Message...`
+    //Can't send media outside of US / Canada 
+    //mediaUrl: cloudinaryUpload.secure_url
   };
   twilio.messages.create(message).then(sentMessage => {
     console.log(`Text send to ${sentMessage.to}`);
   });
-})();
+};
