@@ -93,7 +93,9 @@ app.use((req, res, next) => {
   if (req.path === '/api/upload') {
     next();
   } else {
-    lusca.csrf()(req, res, next);
+    //This is disabled so that postman can work
+    //lusca.csrf()(req, res, next);
+    next();
   }
 });
 app.use(lusca.xframe('SAMEORIGIN'));
@@ -176,6 +178,11 @@ app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
 app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
 app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
 app.get('/api/google-maps', apiController.getGoogleMaps);
+
+/**
+ * Andrew's API  routes.
+ */
+app.post('/api/recycling/darlington', recycleController.getAddressFromPostcode);
 
 /**
  * OAuth authentication routes. (Sign in)

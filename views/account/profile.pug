@@ -31,6 +31,18 @@ block content
       .col-md-7
         input.form-control(type='text', name='location', id='location', value=user.profile.location, autocomplete)
     .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='postcode') postcode
+      .col-md-7
+        .input-group
+          input.form-control(type='text', name='postcode', id='postcode', value=user.profile.postcode, autocomplete)
+          .input-group-append
+            a.btn.btn-raised(id='select_link', href='#', role='button') Lookup »
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='address') address
+      .col-md-7
+        select.form-control(type='text', name='address', id='address',disabled, value=user.profile.address, autocomplete)
+
+    .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='uprn') uprn
       .col-md-7
         input.form-control(type='text', name='uprn', id='uprn', value=user.profile.uprn, autocomplete)
