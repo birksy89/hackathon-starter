@@ -31,6 +31,10 @@ block content
       .col-md-7
         input.form-control(type='text', name='location', id='location', value=user.profile.location, autocomplete)
     .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='uprn') uprn
+      .col-md-7
+        input.form-control(type='text', name='uprn', id='uprn', value=user.profile.uprn, autocomplete)
+    .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='website') Website
       .col-md-7
         input.form-control(type='text', name='website', id='website', value=user.profile.website, autocomplete='url')
