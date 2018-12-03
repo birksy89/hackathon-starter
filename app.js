@@ -93,8 +93,8 @@ app.use((req, res, next) => {
   if (req.path === '/api/upload') {
     next();
   } else {
-    //This is disabled so that postman can work
-    //lusca.csrf()(req, res, next);
+    // This is disabled so that postman can work
+    // lusca.csrf()(req, res, next);
     next();
   }
 });

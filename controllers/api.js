@@ -424,8 +424,8 @@ exports.postTwilio = (req, res, next) => {
   }
 
   const message = {
-    to: 'whatsapp:+447799061149' ,
-    from: 'whatsapp:+14155238886',      
+    to: 'whatsapp:+447799061149',
+    from: 'whatsapp:+14155238886',
     body: req.body.message,
     mediaUrl: 'https://emerald-coral-3661.twil.io/assets/2-OwlAir-Upcoming-Trip.PNG'
 
