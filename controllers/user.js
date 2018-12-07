@@ -146,6 +146,7 @@ exports.postUpdateProfile = (req, res, next) => {
     user.profile.name = req.body.name || '';
     user.profile.gender = req.body.gender || '';
     user.profile.location = req.body.location || '';
+    user.profile.address = req.body.address || '';
     user.profile.uprn = req.body.uprn || '';
     user.profile.postcode = req.body.postcode || '';
     user.profile.website = req.body.website || '';

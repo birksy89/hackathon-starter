@@ -97,45 +97,48 @@ exports.getCollectionDates = async () => {
 };
 
 exports.getAddressFromPostcode = async (req, res, next) => {
-  
-  //console.log(req.body);
+  console.log(req.body);
 
-  let { council, postcode } = req.body;
+  try {
+    let { council, postcode } = req.body;
 
-  var addresses;
+    var addresses;
 
-  switch (council) {
-    case "Darlington":
-      addresses = await postcode2addDarlington(postcode);
-      break;
-    case "Richmondshire":
-      //TBD
-      break;
-    case "Hambleton":
-      //TBD
-      break;
-    default:
-      console.log("Running Default Function...");
+    switch (council) {
+      case "Darlington":
+        addresses = await postcode2addDarlington(postcode);
+        break;
+      case "Richmondshire":
+        //TBD
+        break;
+      case "Hambleton":
+        //TBD
+        break;
+      default:
+        console.log("No location / Council Selected ...");
+    }
+
+    let response = req.body;
+    response.addresses = addresses;
+    res.json(response);
+    return;
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({ error: error.toString() });
   }
-
-  let response = req.body;
-
-  response.addresses = addresses;
-
-  res.json(response);
-  return;
 };
 
 async function postcode2addDarlington(postcode) {
+  try {
+    const browser = await puppeteer.launch({
+      //headless: false
+    });
 
-  const browser = await puppeteer.launch({
-    //headless: false
-  });
-
-  const page = await browser.newPage();
-  await page.goto(
-    "https://www.darlington.gov.uk/environment-and-planning/street-scene/weekly-refuse-and-recycling-collection-lookup/"
-  );
+    const page = await browser.newPage();
+    await page.goto(
+      "https://www.darlington.gov.uk/environment-and-planning/street-scene/weekly-refuse-and-recycling-collection-lookup/"
+    );
 
     //Register DOM Elements
     const DOM_POSTCODE = "#postcode";
@@ -146,15 +149,20 @@ async function postcode2addDarlington(postcode) {
     //Go
     await page.click(DOM_POSTCODE_SUBMIT);
     await page.waitForNavigation();
-  
+
     //  Step 2 - Select Address From Dropdown
     //Register DOM Elements
     const DOM_ADDRESS = "#address";
     //Perform
     // await page.select(DOM_ADDRESS, UPRN);
-    const addressSelector = await page.evaluate(el => el.innerHTML, await page.$(DOM_ADDRESS));
+    const addressSelector = await page.evaluate(
+      el => el.innerHTML,
+      await page.$(DOM_ADDRESS)
+    );
     return addressSelector;
-
-
-
+  } catch (error) {
+    throw new Error(
+      `Couldn't locate data for postcode ${postcode} in Darlington`
+    );
+  }
 }
