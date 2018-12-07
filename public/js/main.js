@@ -24,7 +24,7 @@ $(document).ready(() => {
     var postcode = $("#postcode");
     var address = $("#addressDropdown");
 
-    var data = {};
+    const data = {};
     data.council = council.val();
     data.postcode = postcode.val();
     data.message = "Looking for postcode";
@@ -34,17 +34,16 @@ $(document).ready(() => {
       data: JSON.stringify(data),
       contentType: "application/json",
       url: "/api/recycling/darlington",
-      success: function(data) {
+      success(data) {
         //console.log(JSON.stringify(data));
 
         address.html(data.addresses);
         address.prop("disabled", false);
       },
       error: function(data) {
-
         console.log(data);
-        
-        alert(data.statusText + " " + data.responseJSON.error)
+
+        alert(data.statusText + " " + data.responseJSON.error);
       }
     });
   });

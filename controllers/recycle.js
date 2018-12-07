@@ -1,3 +1,4 @@
+const fs = require("fs");
 const puppeteer = require("puppeteer");
 const cloudinary = require("cloudinary");
 const twilio = require("twilio")(
@@ -60,14 +61,14 @@ exports.getCollectionDates = async () => {
   await browser.close();
 
   //Send Image up to cloudinary
-  var cloudinaryUpload = await cloudinary.v2.uploader.upload(
+  const cloudinaryUpload = await cloudinary.v2.uploader.upload(
     SCREENSHOT_PATH,
-    function(error, result) {
+    (error, result) => {
       //console.log(result, error);
 
       //If the file has been uploaded to cloudinary - Delete from local
-      var fs = require("fs");
-      var filePath = SCREENSHOT_PATH;
+
+      const filePath = SCREENSHOT_PATH;
       fs.unlinkSync(filePath);
 
       return result;
@@ -87,7 +88,7 @@ exports.getCollectionDates = async () => {
   const message = {
     to: "+447799061149",
     from: "+441325952196",
-    body: `New Recycling Message...`
+    body: "New Recycling Message..."
     //Can't send media outside of US / Canada
     //mediaUrl: cloudinaryUpload.secure_url
   };
