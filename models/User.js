@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     postcode: String,
     website: String,
     picture: String
+  },
+  collections: {
+    nextCollectionType: String,
+    nextCollectionDate: Date
   }
 }, { timestamps: true });
 

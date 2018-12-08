@@ -33,7 +33,7 @@ $(document).ready(() => {
       type: 'POST',
       data: JSON.stringify(data),
       contentType: 'application/json',
-      url: '/api/recycling/darlington',
+      url: '/api/recycling/lookup',
       success(data) {
         // console.log(JSON.stringify(data));
 

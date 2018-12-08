@@ -182,7 +182,7 @@ app.get('/api/google-maps', apiController.getGoogleMaps);
 /**
  * Andrew's API  routes.
  */
-app.post('/api/recycling/darlington', recycleController.getAddressFromPostcode);
+app.post('/api/recycling/lookup', recycleController.getAddressFromPostcode);
 
 /**
  * OAuth authentication routes. (Sign in)
