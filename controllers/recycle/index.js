@@ -1,3 +1,4 @@
+const moment = require('moment');
 const darlington = require('./locations/darlington');
 const User = require('../../models/User');
 /*
@@ -8,45 +9,56 @@ exports.scheduler = async () => {
   User.find(query).then((users) => {
   // Perform an action for all the users
     users.map(async (user) => {
-      const { profile: { location, postcode, uprn }, collections: { nextCollectionType, nextCollectionDate } } = user;
+      const {
+        profile: { location, postcode, uprn },
+        collections: { nextCollectionType, nextCollectionDate }
+      } = user;
 
-      // Check to see if the user already has their "next collection date"
+      // Check to see how many days till next collection
+      const daysTillCollection = moment(nextCollectionDate).diff(moment(), 'days');
+      console.log(daysTillCollection);
 
       // Check to see if it's still in the future
+      if (daysTillCollection === 1) {
+        console.log('Send out notifications now!!');
+      } else if (daysTillCollection > 1) {
+        console.log(`Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
+      } else {
+        // If it's not - Then we need to go off and find the "next collection date"
+        console.log('Go get new one...');
 
-      // If it's not - Then we need to go off and find the "next collection date"
+        // Set up variable...
+        let nextCollection;
 
-      // Set up variable...
-      let nextCollection;
+        switch (location) {
+          case 'Darlington':
+            nextCollection = await darlington.getNextCollection(postcode, uprn);
+            break;
+          case 'Richmondshire':
+            // TBD
+            break;
+          case 'Hambleton':
+            // TBD
+            break;
+          default:
+            console.log('No location / Council Available for this user ...');
+        }
 
-      switch (location) {
-        case 'Darlington':
-          console.log(nextCollectionType);
-          // nextCollection = await darlington.getNextCollection(postcode, uprn);
-          break;
-        case 'Richmondshire':
-        // TBD
-          break;
-        case 'Hambleton':
-        // TBD
-          break;
-        default:
-          console.log('No location / Council Available for this user ...');
+        if (nextCollection) {
+          console.log(nextCollection);
+          user.collections.nextCollectionDate = nextCollection.collectionDate;
+          user.collections.nextCollectionType = nextCollection.collectionType;
+          user.save();
+        }
       }
 
-      // Check how the next collections come back
-      console.log(nextCollection);
 
-
-      // user.collections.nextCollectionDate = nextCollection.collectionDate;
-      // user.collections.nextCollectionType = nextCollection.collectionType;
-      user.save();
       return user;
     });
   });
 };
-
-this.scheduler();
+//  Run it!
+//  this.scheduler();
 
 
 /*

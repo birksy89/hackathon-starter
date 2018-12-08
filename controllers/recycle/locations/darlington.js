@@ -31,7 +31,7 @@ exports.getNextCollection = async (postcode, uprn) => {
 
   const RESULTS = await page.$('#detailsDisplay');
 
-  const colletionType = await page.evaluate(el => el.innerHTML,
+  const collectionType = await page.evaluate(el => el.innerHTML,
     await RESULTS.$('.refuse-results .panel-heading h2'));
 
   const collectionDateString = await page.evaluate(el => el.innerHTML,
@@ -47,7 +47,7 @@ exports.getNextCollection = async (postcode, uprn) => {
     postcode,
     uprn,
     collectionDate,
-    colletionType
+    collectionType
   };
 };
 
