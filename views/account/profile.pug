@@ -30,8 +30,8 @@ block content
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='location') Location
       .col-md-7
         select.form-control(name='location', id='location')
-          option Darlington
-          option Richmondshire
+          option(selected=(user.profile.location =='Darlington')) Darlington
+          option(selected=(user.profile.location =='Richmondshire')) Richmondshire
     .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='postcode') postcode
       .col-md-7

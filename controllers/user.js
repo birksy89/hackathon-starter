@@ -147,6 +147,11 @@ exports.postUpdateProfile = (req, res, next) => {
     user.profile.gender = req.body.gender || '';
     user.profile.location = req.body.location || '';
     user.profile.address = req.body.address || '';
+
+    if (user.profile.uprn !== req.body.uprn) {
+      // UPRN has changed - And thus any upcoming collections should be wiped
+      user.collections = null;
+    }
     user.profile.uprn = req.body.uprn || '';
     user.profile.postcode = req.body.postcode || '';
     user.profile.website = req.body.website || '';

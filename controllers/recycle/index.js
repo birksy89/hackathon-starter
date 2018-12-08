@@ -1,5 +1,6 @@
 const moment = require('moment');
 const darlington = require('./locations/darlington');
+const richmondshire = require('./locations/richmondshire');
 const User = require('../../models/User');
 /*
     This is the scheduler
@@ -35,7 +36,7 @@ exports.scheduler = async () => {
             nextCollection = await darlington.getNextCollection(postcode, uprn);
             break;
           case 'Richmondshire':
-            // TBD
+            nextCollection = await richmondshire.getNextCollection(postcode, uprn);
             break;
           case 'Hambleton':
             // TBD
@@ -58,7 +59,7 @@ exports.scheduler = async () => {
   });
 };
 //  Run it!
-//  this.scheduler();
+this.scheduler();
 
 
 /*
@@ -74,7 +75,7 @@ exports.getAddressFromPostcode = async (req, res, next) => {
         addresses = await darlington.getAddressFromPostcode(postcode);
         break;
       case 'Richmondshire':
-        // TBD
+        addresses = await richmondshire.getAddressFromPostcode(postcode);
         break;
       case 'Hambleton':
         // TBD
