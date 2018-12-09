@@ -14,7 +14,7 @@ exports.checker = async () => {
   const query = { 'profile.uprn': { $ne: null } };
   User.find(query).then((users) => {
   // Perform an action for all the users
-    users.map(async (user) => {
+    users.map(async function checkCollectionStatus(user) {
       const {
         profile: { location, postcode, uprn },
         collections: { nextCollectionType, nextCollectionDate }
@@ -25,14 +25,14 @@ exports.checker = async () => {
       // console.log(daysTillCollection);
 
       // Check to see if it's still in the future
-      if (daysTillCollection === 1 || true) {
+      if (daysTillCollection === 1) {
         console.log('Send out notifications now!!');
         module.exports.notifier(user);
       } else if (daysTillCollection > 1) {
         console.log(`Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
       } else {
         // If it's not - Then we need to go off and find the "next collection date"
-        console.log('Go get new one...');
+        console.log('Need to get new collection dates...');
 
         // Set up variable...
         let nextCollection;
@@ -56,6 +56,9 @@ exports.checker = async () => {
           user.collections.nextCollectionDate = nextCollection.collectionDate;
           user.collections.nextCollectionType = nextCollection.collectionType;
           user.save();
+
+          // At this point - run the function again with the new collection dates
+          checkCollectionStatus(user);
         }
       }
 
@@ -84,6 +87,9 @@ exports.notifier = async (user) => {
     from: '+441325952196',
     body: messageBody
   };
+
+  console.log(messageBody);
+
   // twilio.messages.create(message).then((sentMessage) => {
   //   console.log(`Text send to ${sentMessage.to}`);
   // });
@@ -125,6 +131,6 @@ exports.getAddressFromPostcode = async (req, res, next) => {
 /*
     This is the scheduler
 */
-// const j = schedule.scheduleJob('42 * * * * *', () => {
-//   module.exports.checker();
-// });
+const j = schedule.scheduleJob('42 * * * * *', () => {
+  module.exports.checker();
+});
