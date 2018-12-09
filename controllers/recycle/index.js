@@ -1,11 +1,16 @@
 const moment = require('moment');
+const schedule = require('node-schedule');
+const twilio = require('twilio')(process.env.TWILIO_SID,
+  process.env.TWILIO_TOKEN);
 const darlington = require('./locations/darlington');
 const richmondshire = require('./locations/richmondshire');
 const User = require('../../models/User');
+
+
 /*
-    This is the scheduler
+    This is the checker
 */
-exports.scheduler = async () => {
+exports.checker = async () => {
   const query = { 'profile.uprn': { $ne: null } };
   User.find(query).then((users) => {
   // Perform an action for all the users
@@ -17,11 +22,12 @@ exports.scheduler = async () => {
 
       // Check to see how many days till next collection
       const daysTillCollection = moment(nextCollectionDate).diff(moment(), 'days');
-      console.log(daysTillCollection);
+      // console.log(daysTillCollection);
 
       // Check to see if it's still in the future
-      if (daysTillCollection === 1) {
+      if (daysTillCollection === 1 || true) {
         console.log('Send out notifications now!!');
+        module.exports.notifier(user);
       } else if (daysTillCollection > 1) {
         console.log(`Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
       } else {
@@ -58,8 +64,30 @@ exports.scheduler = async () => {
     });
   });
 };
-//  Run it!
-this.scheduler();
+
+
+/*
+    This is used to notify users
+*/
+exports.notifier = async (user) => {
+  const {
+    profile: { location, postcode, uprn },
+    collections: { nextCollectionType, nextCollectionDate }
+  } = user;
+
+  const friendlyDate = moment(nextCollectionDate).format('dddd, MMMM Do YYYY');
+
+  const messageBody = `Your ${nextCollectionType} will be collected on ${friendlyDate}`;
+
+  const message = {
+    to: '+447799061149',
+    from: '+441325952196',
+    body: messageBody
+  };
+  // twilio.messages.create(message).then((sentMessage) => {
+  //   console.log(`Text send to ${sentMessage.to}`);
+  // });
+};
 
 
 /*
@@ -93,3 +121,10 @@ exports.getAddressFromPostcode = async (req, res, next) => {
     res.status(500).send({ error: error.toString() });
   }
 };
+
+/*
+    This is the scheduler
+*/
+// const j = schedule.scheduleJob('42 * * * * *', () => {
+//   module.exports.checker();
+// });
