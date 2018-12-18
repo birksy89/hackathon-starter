@@ -89,6 +89,8 @@ exports.notifier = async (user) => {
     console.log(`User has a phone number! It's: ${phone}`);
     console.log(`Let's send them this: ${messageBody}`);
 
+    //  TODO - Convert number to international format and use
+
 
     const message = {
       to: '+447799061149',
