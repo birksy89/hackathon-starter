@@ -25,7 +25,7 @@ exports.checker = async () => {
       // console.log(daysTillCollection);
 
       // Check to see if it's still in the future
-      if (daysTillCollection === 1) {
+      if (daysTillCollection === 1 || true) {
         console.log('Send out notifications now!!');
         module.exports.notifier(user);
       } else if (daysTillCollection > 1) {
@@ -74,6 +74,8 @@ exports.checker = async () => {
 */
 exports.notifier = async (user) => {
   const {
+    email,
+    phone,
     profile: { location, postcode, uprn },
     collections: { nextCollectionType, nextCollectionDate }
   } = user;
@@ -82,17 +84,24 @@ exports.notifier = async (user) => {
 
   const messageBody = `Your ${nextCollectionType} will be collected on ${friendlyDate}`;
 
-  const message = {
-    to: '+447799061149',
-    from: '+441325952196',
-    body: messageBody
-  };
 
-  console.log(messageBody);
+  if (phone) {
+    console.log(`User has a phone number! It's: ${phone}`);
+    console.log(`Let's send them this: ${messageBody}`);
 
-  // twilio.messages.create(message).then((sentMessage) => {
-  //   console.log(`Text send to ${sentMessage.to}`);
-  // });
+
+    const message = {
+      to: '+447799061149',
+      from: '+441325952196',
+      body: messageBody
+    };
+
+    // twilio.messages.create(message).then((sentMessage) => {
+    //   console.log(`Text send to ${sentMessage.to}`);
+    // });
+  } else {
+    console.log(`No phone number present - Email them? ${email}`);
+  }
 };
 
 
@@ -134,3 +143,6 @@ exports.getAddressFromPostcode = async (req, res, next) => {
 const j = schedule.scheduleJob('42 * * * * *', () => {
   // module.exports.checker();
 });
+
+//  Manually run
+module.exports.checker();

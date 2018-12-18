@@ -7,13 +7,17 @@ block content
   form(action='/account/profile', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Name
+      .col-md-7
+        input.form-control(type='text', name='name', id='name', value=user.profile.name, autocomplete='name')
+    .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='email') Email
       .col-md-7
         input.form-control(type='email', name='email', id='email', value=user.email, autocomplete='email')
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Name
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='phone') Phone
       .col-md-7
-        input.form-control(type='text', name='name', id='name', value=user.profile.name, autocomplete='name')
+        input.form-control(type='tel', name='phone', id='phone', value=user.phone, autocomplete='tel')
     //- .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right Gender
       .col-sm-6
