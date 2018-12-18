@@ -133,6 +133,10 @@ exports.postUpdateProfile = (req, res, next) => {
   req.assert('email', 'Please enter a valid email address.').isEmail();
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
+  //  Try similar validation for phone
+  req.assert('phone', 'Please enter a valid mobile phone.').isMobilePhone('en-GB');
+
+
   const errors = req.validationErrors();
 
   if (errors) {
