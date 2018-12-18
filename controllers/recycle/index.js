@@ -132,5 +132,5 @@ exports.getAddressFromPostcode = async (req, res, next) => {
     This is the scheduler
 */
 const j = schedule.scheduleJob('42 * * * * *', () => {
-  module.exports.checker();
+  // module.exports.checker();
 });
