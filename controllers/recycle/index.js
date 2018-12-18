@@ -13,7 +13,7 @@ const User = require('../../models/User');
 exports.checker = async () => {
   const query = { 'profile.uprn': { $ne: null } };
   User.find(query).then((users) => {
-  // Perform an action for all the users
+    // Perform an action for all the users
     users.map(async function checkCollectionStatus(user) {
       const {
         profile: { location, postcode, uprn },
@@ -96,9 +96,9 @@ exports.notifier = async (user) => {
       body: messageBody
     };
 
-    // twilio.messages.create(message).then((sentMessage) => {
-    //   console.log(`Text send to ${sentMessage.to}`);
-    // });
+    twilio.messages.create(message).then((sentMessage) => {
+      console.log(`Text send to ${sentMessage.to}`);
+    });
   } else {
     console.log(`No phone number present - Email them? ${email}`);
   }
@@ -139,10 +139,19 @@ exports.getAddressFromPostcode = async (req, res, next) => {
 
 /*
     This is the scheduler
+        *    *    *    *    *    *
+       ┬    ┬    ┬    ┬    ┬    ┬
+      │    │    │    │    │    │
+     │    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
+    │    │    │    │    └───── month (1 - 12)
+   │    │    │    └────────── day of month (1 - 31)
+  │    │    └─────────────── hour (0 - 23)
+ │    └──────────────────── minute (0 - 59)
+└───────────────────────── second (0 - 59, OPTIONAL)
 */
-const j = schedule.scheduleJob('42 * * * * *', () => {
-  // module.exports.checker();
+const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
+  module.exports.checker();
 });
 
 //  Manually run
-module.exports.checker();
+// module.exports.checker();
