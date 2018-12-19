@@ -17,8 +17,14 @@ $(document).ready(() => {
     }
   });
 
-  $('#select_link').click((e) => {
+  $('#select_link').click(function click(e) {
     e.preventDefault();
+
+    const $this = $(this);
+    console.log($this);
+
+    $this.attr('value', 'Please Wait... ');
+    $this.attr('disabled', true);
 
     const council = $('#location');
     const postcode = $('#postcode');
@@ -45,6 +51,11 @@ $(document).ready(() => {
 
         // eslint-disable-next-line no-alert
         alert(`${data.statusText} ${data.responseJSON.error}`);
+      },
+      complete() {
+        console.log('Done');
+        $this.attr('value', 'Find Address');
+        $this.attr('disabled', false);
       }
     });
   });
