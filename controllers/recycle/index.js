@@ -25,7 +25,7 @@ exports.checker = async () => {
       // console.log(daysTillCollection);
 
       // Check to see if it's still in the future
-      if (daysTillCollection === 1 || true) {
+      if (daysTillCollection === 1) {
         console.log('Send out notifications now!!');
         module.exports.notifier(user);
       } else if (daysTillCollection > 1) {
