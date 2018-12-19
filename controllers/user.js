@@ -134,14 +134,10 @@ exports.postUpdateProfile = (req, res, next) => {
   req.sanitize('email').normalizeEmail({ gmail_remove_dots: false });
 
   //  Try similar validation for phone
-  const { phone } = req.body;
-
-  console.log(phone);
-
-
-  // phone = phone.replace(/\s/g, '');
-
-  req.checkBody('phone', 'Please enter a valid mobile phone.').trim().blacklist(' ').isMobilePhone('en-GB');
+  req.checkBody('phone', 'Please enter a valid mobile phone.')
+    .trim()
+    .blacklist(' ')
+    .isMobilePhone('en-GB');
 
 
   const errors = req.validationErrors();

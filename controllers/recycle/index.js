@@ -73,7 +73,8 @@ exports.checker = async () => {
     This is used to notify users
 */
 exports.notifier = async (user) => {
-  const {
+  let {
+    // eslint-disable-next-line prefer-const
     email,
     phone,
     profile: { location, postcode, uprn },
@@ -89,11 +90,13 @@ exports.notifier = async (user) => {
     console.log(`User has a phone number! It's: ${phone}`);
     console.log(`Let's send them this: ${messageBody}`);
 
-    //  TODO - Convert number to international format and use
+    //  Convert to international phone format
+    //  Remove the first "0" and add +44
+    phone = phone.replace(/^0+/, '+44');
 
 
     const message = {
-      to: '+447799061149',
+      to: phone,
       from: '+441325952196',
       body: messageBody
     };
