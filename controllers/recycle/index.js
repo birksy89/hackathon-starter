@@ -2,6 +2,7 @@ const moment = require('moment');
 const schedule = require('node-schedule');
 const twilio = require('twilio')(process.env.TWILIO_SID,
   process.env.TWILIO_TOKEN);
+const sgMail = require('@sendgrid/mail');
 const darlington = require('./locations/darlington');
 const richmondshire = require('./locations/richmondshire');
 const User = require('../../models/User');
@@ -110,6 +111,23 @@ exports.notifier = async (user) => {
 };
 
 
+exports.notifierEmail = async () => {
+// using SendGrid's v3 Node.js Library
+// https://github.com/sendgrid/sendgrid-nodejs
+
+
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const msg = {
+    to: 'andy.birks@gmail.com',
+    from: 'noreply@andrewbirks.com',
+    subject: 'Recycling Application Notifiation',
+    text: 'Your collection data is soon',
+    html: '<strong>Your collection data is soon :)</strong>',
+  };
+  sgMail.send(msg);
+};
+
+
 /*
     This is used on the user profile page to lookup their address from a given postcode
     It acts as a switch to use the appropriate function for the given council
@@ -160,3 +178,6 @@ const j = schedule.scheduleJob({ second: 30 }, () => {
 
 //  Manually run
 // module.exports.checker();
+
+// Testing Emailer
+module.exports.notifierEmail();
