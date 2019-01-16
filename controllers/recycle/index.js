@@ -183,7 +183,7 @@ const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
 });
 
 //  Manually run
-module.exports.checker();
+//  module.exports.checker();
 
 // Testing Emailer
 // module.exports.notifierEmail();

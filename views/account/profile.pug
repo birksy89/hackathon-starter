@@ -7,17 +7,17 @@ block content
   form(action='/account/profile', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Name
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='name' ) Name
       .col-md-7
-        input.form-control(type='text', name='name', id='name', value=user.profile.name, autocomplete='name')
+        input.form-control(type='text', name='name', id='name', value=user.profile.name, autocomplete='name' required)
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='email') Email
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='email' ) Email
       .col-md-7
-        input.form-control(type='email', name='email', id='email', value=user.email, autocomplete='email')
+        input.form-control(type='email', name='email', id='email', value=user.email, autocomplete='email' required)
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='phone') Phone
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='phone' ) Phone
       .col-md-7
-        input.form-control(type='tel', name='phone', id='phone', value=user.phone, autocomplete='tel')
+        input.form-control(type='tel', name='phone', id='phone', value=user.phone, autocomplete='tel' required)
     //- .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right Gender
       .col-sm-6
@@ -31,22 +31,23 @@ block content
           input(type='radio', checked=user.profile.gender=='other', name='gender', value='other', data-toggle='radio')
           span Other
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='location') Location
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='location') Council
       .col-md-7
-        select.form-control(name='location', id='location')
+        select.form-control(name='location', id='location' required)
+          option(selected disabled value) -- Please Select Option --
           option(selected=(user.profile.location =='Darlington')) Darlington
           option(selected=(user.profile.location =='Richmondshire')) Richmondshire
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='postcode') postcode
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='postcode') Postcode
       .col-md-7
         .input-group
-          input.form-control(type='text', name='postcode', id='postcode', value=user.profile.postcode, autocomplete)
+          input.form-control(type='text', name='postcode', id='postcode', value=user.profile.postcode, autocomplete required)
           .input-group-append
             input.btn.btn-raised(type='text',id='select_link', href='#', role='button' value="Find Address")
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='addressDropdown') addresss
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='addressDropdown') Address
       .col-md-7
-        select.form-control(name='addressDropdown', id='addressDropdown',disabled)
+        select.form-control(name='addressDropdown', id='addressDropdown',disabled )
           option=user.profile.address
         input.form-control(type='hidden', name='address', id='address', value=user.profile.address)
         input.form-control(type='hidden', name='uprn', id='uprn', value=user.profile.uprn)
@@ -95,41 +96,41 @@ block content
           i.fas.fa-trash-alt.fa-sm
           | Delete my account
 
-  .pb-2.mt-2.mb-4.border-bottom
-    h3 Linked Accounts
-  .form-group
-    .offset-sm-3.col-md-7.pl-2
-      if user.instagram
-        p.mb-1: a.text-danger(href='/account/unlink/instagram') Unlink your Instagram account
-      else
-        p.mb-1: a(href='/auth/instagram') Link your Instagram account
-    .offset-sm-3.col-md-7.pl-2
-      if user.google
-        p.mb-1: a.text-danger(href='/account/unlink/google') Unlink your Google account
-      else
-        p.mb-1: a(href='/auth/google') Link your Google account
-    .offset-sm-3.col-md-7.pl-2
-      if user.facebook
-        p.mb-1: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
-      else
-        p.mb-1: a(href='/auth/facebook') Link your Facebook account
-    .offset-sm-3.col-md-7.pl-2
-      if user.twitter
-        p.mb-1: a.text-danger(href='/account/unlink/twitter') Unlink your Twitter account
-      else
-        p.mb-1: a(href='/auth/twitter') Link your Twitter account
-    .offset-sm-3.col-md-7.pl-2
-      if user.github
-        p.mb-1: a.text-danger(href='/account/unlink/github') Unlink your GitHub account
-      else
-        p.mb-1: a(href='/auth/github') Link your GitHub account
-    .offset-sm-3.col-md-7.pl-2
-      if user.linkedin
-        p.mb-1: a.text-danger(href='/account/unlink/linkedin') Unlink your LinkedIn account
-      else
-        p.mb-1: a(href='/auth/linkedin') Link your LinkedIn account
-    .offset-sm-3.col-md-7.pl-2
-      if user.steam
-        p.mb-1: a.text-danger(href='/account/unlink/steam') Unlink your Steam account
-      else
-        p.mb-1: a(href='/auth/steam') Link your Steam account
+  //- .pb-2.mt-2.mb-4.border-bottom
+  //-   h3 Linked Accounts
+  //- .form-group
+  //-   .offset-sm-3.col-md-7.pl-2
+  //-     if user.instagram
+  //-       p.mb-1: a.text-danger(href='/account/unlink/instagram') Unlink your Instagram account
+  //-     else
+  //-       p.mb-1: a(href='/auth/instagram') Link your Instagram account
+  //-   .offset-sm-3.col-md-7.pl-2
+  //-     if user.google
+  //-       p.mb-1: a.text-danger(href='/account/unlink/google') Unlink your Google account
+  //-     else
+  //-       p.mb-1: a(href='/auth/google') Link your Google account
+  //-   .offset-sm-3.col-md-7.pl-2
+  //-     if user.facebook
+  //-       p.mb-1: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
+  //-     else
+  //-       p.mb-1: a(href='/auth/facebook') Link your Facebook account
+  //-   .offset-sm-3.col-md-7.pl-2
+  //-     if user.twitter
+  //-       p.mb-1: a.text-danger(href='/account/unlink/twitter') Unlink your Twitter account
+  //-     else
+  //-       p.mb-1: a(href='/auth/twitter') Link your Twitter account
+  //-   .offset-sm-3.col-md-7.pl-2
+  //-     if user.github
+  //-       p.mb-1: a.text-danger(href='/account/unlink/github') Unlink your GitHub account
+  //-     else
+  //-       p.mb-1: a(href='/auth/github') Link your GitHub account
+  //-   .offset-sm-3.col-md-7.pl-2
+  //-     if user.linkedin
+  //-       p.mb-1: a.text-danger(href='/account/unlink/linkedin') Unlink your LinkedIn account
+  //-     else
+  //-       p.mb-1: a(href='/auth/linkedin') Link your LinkedIn account
+  //-   .offset-sm-3.col-md-7.pl-2
+  //-     if user.steam
+  //-       p.mb-1: a.text-danger(href='/account/unlink/steam') Unlink your Steam account
+  //-     else
+  //-       p.mb-1: a(href='/auth/steam') Link your Steam account
