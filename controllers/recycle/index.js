@@ -22,17 +22,24 @@ exports.checker = async () => {
       } = user;
 
       // Check to see how many days till next collection
-      const daysTillCollection = moment(nextCollectionDate).diff(moment(), 'days');
-      // console.log(daysTillCollection);
+      const daysTillCollection = moment(nextCollectionDate).startOf('day').diff(moment(), 'days'); // 0 (@ 10:50 The day of)
 
-      // Check to see if it's still in the future
+
+      //  If the number returned is >1 - There's more than 1 day left
+      if (daysTillCollection > 1) {
+        console.log(`Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
+      } else
+      //  If the number is 1 - Then probably should send out the notifications
       if (daysTillCollection === 1) {
         console.log('Send out notifications now!!');
         module.exports.notifier(user);
-      } else if (daysTillCollection > 1) {
-        console.log(`Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
+      } else
+      //  If the number is 0 - It's the same day and the council haven't updated the "next date"
+      if (daysTillCollection === 0) {
+        console.log(`It's the same day and the council probably haven't updated the "next date" yet - Check back tomorrow`);
       } else {
-        // If it's not - Then we need to go off and find the "next collection date"
+      //  If the number is <1 - Then the date has passed, and we should try get the "next date"
+
         console.log('Need to get new collection dates...');
 
         // Set up variable...
@@ -112,8 +119,8 @@ exports.notifier = async (user) => {
 
 
 exports.notifierEmail = async () => {
-// using SendGrid's v3 Node.js Library
-// https://github.com/sendgrid/sendgrid-nodejs
+  // using SendGrid's v3 Node.js Library
+  // https://github.com/sendgrid/sendgrid-nodejs
 
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -177,7 +184,7 @@ const j = schedule.scheduleJob({ second: 30 }, () => {
 });
 
 //  Manually run
-// module.exports.checker();
+module.exports.checker();
 
 // Testing Emailer
 // module.exports.notifierEmail();
