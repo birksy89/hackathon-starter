@@ -22,20 +22,19 @@ exports.checker = async () => {
       } = user;
 
       // Check to see how many days till next collection
-      const daysTillCollection = moment(nextCollectionDate).startOf('day').diff(moment(), 'days'); // 0 (@ 10:50 The day of)
-
+      const daysTillCollection = moment(nextCollectionDate).startOf('day').diff(moment().startOf('day'), 'days');
 
       //  If the number returned is >1 - There's more than 1 day left
-      if (daysTillCollection > 1) {
+      if (nextCollectionDate && daysTillCollection > 1) {
         console.log(`Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
       } else
       //  If the number is 1 - Then probably should send out the notifications
-      if (daysTillCollection === 1) {
-        console.log('Send out notifications now!!');
+      if (nextCollectionDate && daysTillCollection === 1) {
+        console.log(`Collection Date is Tomorrow - Send out Notifications`);
         module.exports.notifier(user);
       } else
       //  If the number is 0 - It's the same day and the council haven't updated the "next date"
-      if (daysTillCollection === 0) {
+      if (nextCollectionDate && daysTillCollection === 0) {
         console.log(`It's the same day and the council probably haven't updated the "next date" yet - Check back tomorrow`);
       } else {
       //  If the number is <1 - Then the date has passed, and we should try get the "next date"
@@ -179,7 +178,7 @@ exports.getAddressFromPostcode = async (req, res, next) => {
  │    └──────────────────── minute (0 - 59)
 └───────────────────────── second (0 - 59, OPTIONAL)
 */
-const j = schedule.scheduleJob({ second: 30 }, () => {
+const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
   module.exports.checker();
 });
 
