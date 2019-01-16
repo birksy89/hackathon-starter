@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 
 exports.getNextCollection = async (postcode, uprn) => {
   const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
     // headless: false
   });
   const page = await browser.newPage();
