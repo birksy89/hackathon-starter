@@ -172,7 +172,7 @@ exports.getAddressFromPostcode = async (req, res, next) => {
  │    └──────────────────── minute (0 - 59)
 └───────────────────────── second (0 - 59, OPTIONAL)
 */
-const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
+const j = schedule.scheduleJob({ second: 30 }, () => {
   module.exports.checker();
 });
 
