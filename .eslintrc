@@ -7,6 +7,7 @@
   },
   "plugins": ["chai-friendly"],
   "rules": {
+    "quotes": ["off", "backtick"],
     "comma-dangle": 0,
     "consistent-return": 0,
     "function-paren-newline": ["error", "never"],
