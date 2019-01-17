@@ -68,4 +68,8 @@ exports.getAddressFromPostcode = async (postcode) => {
     throw new Error(`Couldn't locate data for postcode ${postcode} in Richmondshire`);
   }
 };
-this.getNextCollection('dl10 5hg', '10012784379');
+
+
+// this.getNextCollection('dl10 5hg', '10012784379').then((x) => {
+//   console.log(x);
+// });
