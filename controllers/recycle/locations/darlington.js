@@ -55,6 +55,7 @@ exports.getNextCollection = async (postcode, uprn) => {
 exports.getAddressFromPostcode = async (postcode) => {
   try {
     const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
       //  headless: false
     });
 
