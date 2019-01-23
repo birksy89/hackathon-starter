@@ -29,6 +29,8 @@ $(document).ready(() => {
     const council = $('#location');
     const postcode = $('#postcode');
     const address = $('#addressDropdown');
+    const addressLabel = $('#addressDropdownLabel');
+    const btnSubmit = $('#submit');
 
     const data = {};
     data.council = council.val();
@@ -44,7 +46,10 @@ $(document).ready(() => {
         // console.log(JSON.stringify(data));
 
         address.html(data.addresses);
+        address.prop('hidden', false);
         address.prop('disabled', false);
+        addressLabel.prop('hidden', false);
+        btnSubmit.prop('disabled', false);
       },
       error(data) {
         console.log(data);

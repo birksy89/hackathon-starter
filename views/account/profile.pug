@@ -43,11 +43,11 @@ block content
         .input-group
           input.form-control(type='text', name='postcode', id='postcode', value=user.profile.postcode, autocomplete required)
           .input-group-append
-            input.btn.btn-raised(type='button',id='select_link', href='#', role='button' value="Find Address")
+            input.btn.btn-success(type='button',id='select_link', href='#', role='button' value="Find Address")
     .form-group.row
-      label.col-md-3.col-form-label.font-weight-bold.text-right(for='addressDropdown') Address
+      label.col-md-3.col-form-label.font-weight-bold.text-right(id='addressDropdownLabel',for='addressDropdown',hidden= !user.profile.address) Address
       .col-md-7
-        select.form-control(name='addressDropdown', id='addressDropdown',disabled )
+        select.form-control(name='addressDropdown', id='addressDropdown',required, hidden= !user.profile.address )
           option=user.profile.address
         input.form-control(type='hidden', name='address', id='address', value=user.profile.address)
         input.form-control(type='hidden', name='uprn', id='uprn', value=user.profile.uprn)
@@ -61,7 +61,7 @@ block content
         img(src=user.gravatar(), class='profile', width='100', height='100')
     .form-group
       .offset-sm-3.col-md-7.pl-2
-        button.btn.btn.btn-primary(type='submit')
+        button.btn.btn.btn-primary(id='btnSubmit'.type='submit', disabled= !user.profile.address)
           i.fas.fa-pencil-alt.fa-sm
           | Update Profile
 

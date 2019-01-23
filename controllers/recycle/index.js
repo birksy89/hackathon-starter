@@ -12,11 +12,12 @@ const User = require('../../models/User');
     This is the checker
 */
 exports.checker = async () => {
-  const query = { 'profile.uprn': { $ne: null } };
+  const query = { 'profile.uprn': { $nin: ["", null] } };
   User.find(query).then((users) => {
     // Perform an action for all the users
     users.map(async function checkCollectionStatus(user) {
       const {
+        email,
         profile: { location, postcode, uprn },
         collections: { nextCollectionType, nextCollectionDate }
       } = user;
@@ -26,20 +27,19 @@ exports.checker = async () => {
 
       //  If the number returned is >1 - There's more than 1 day left
       if (nextCollectionDate && daysTillCollection > 1) {
-        console.log(`Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
+        console.log(`${uprn}/ ${email} -  - Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
       } else
       //  If the number is 1 - Then probably should send out the notifications
       if (nextCollectionDate && daysTillCollection === 1) {
-        console.log(`Collection Date is Tomorrow - Send out Notifications`);
+        console.log(`${uprn}/ ${email} -  - Collection Date is Tomorrow - Send out Notifications`);
         module.exports.notifier(user);
       } else
       //  If the number is 0 - It's the same day and the council haven't updated the "next date"
       if (nextCollectionDate && daysTillCollection === 0) {
-        console.log(`It's the same day and the council probably haven't updated the "next date" yet - Check back tomorrow`);
+        console.log(`${uprn}/ ${email} -  - It's the same day and the council probably haven't updated the "next date" yet - Check back tomorrow`);
       } else {
-      //  If the number is <1 - Then the date has passed, and we should try get the "next date"
-
-        console.log('Need to get new collection dates...');
+        //  If the number is <1 - Then the date has passed, and we should try get the "next date"
+        console.log(`${uprn}/ ${email} -  - Need to get new collection dates...`);
 
         // Set up variable...
         let nextCollection;
@@ -59,7 +59,7 @@ exports.checker = async () => {
         }
 
         if (nextCollection) {
-          console.log(nextCollection);
+          console.log(`${uprn}/ ${email} -  - Updating with new collection data`);
           user.collections.nextCollectionDate = nextCollection.collectionDate;
           user.collections.nextCollectionType = nextCollection.collectionType;
           user.save();
@@ -101,16 +101,21 @@ exports.notifier = async (user) => {
     //  Remove the first "0" and add +44
     phone = phone.replace(/^0+/, '+44');
 
+    if (process.env.NODE_ENV === 'development') {
+      //  If in development mode - Mock message:
+      console.log(`DEV: If production would have sent: ${messageBody}`);
+    } else {
+      // If in production - Actually Send Message:
+      const message = {
+        to: phone,
+        from: '+441325952196',
+        body: messageBody
+      };
 
-    const message = {
-      to: phone,
-      from: '+441325952196',
-      body: messageBody
-    };
-
-    twilio.messages.create(message).then((sentMessage) => {
-      console.log(`Text send to ${sentMessage.to}`);
-    });
+      twilio.messages.create(message).then((sentMessage) => {
+        console.log(`Text send to ${sentMessage.to}`);
+      });
+    }
   } else {
     console.log(`No phone number present - Email them? ${email}`);
   }
@@ -182,8 +187,10 @@ const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
   module.exports.checker();
 });
 
-//  Manually run
-//  module.exports.checker();
+//  Manually run in development
+if (process.env.NODE_ENV === 'development') {
+  // module.exports.checker();
+}
 
 // Testing Emailer
 // module.exports.notifierEmail();
