@@ -4,7 +4,7 @@ const axios = require('axios');
 
 exports.getNextCollection = async (postcode, uprn) => {
   try {
-    const url = `https://www.richmondshire.gov.uk/Umbraco/Api/BinRoundInfoApi/GetBinRoundData?uprn=${uprn}`;
+    const url = `https://www.richmondshire.gov.uk/Umbraco/Api/MyAreaApi/GetBinRoundData?uprn=${uprn}`;
 
     return axios.get(url)
       .then((res) => {
@@ -41,7 +41,7 @@ exports.getNextCollection = async (postcode, uprn) => {
 
 exports.getAddressFromPostcode = async (postcode) => {
   try {
-    const url = `https://www.richmondshire.gov.uk/Umbraco/Api/BinRoundInfoApi/GetAddressesForPostCode/${postcode}`;
+    const url = `https://www.richmondshire.gov.uk/Umbraco/Api/MyAreaApi/GetAddressesForPostCode/${postcode}`;
 
     return axios.get(url)
       .then((res) => {
