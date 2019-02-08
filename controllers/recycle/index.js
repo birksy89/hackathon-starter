@@ -12,7 +12,19 @@ const User = require('../../models/User');
     This is the checker
 */
 exports.checker = async () => {
-  const query = { 'profile.uprn': { $nin: ["", null] } };
+  let query;
+
+  if (process.env.NODE_ENV === 'production') {
+    // If running in production - Run against all users who have a "uprn"
+    query = { 'profile.uprn': { $nin: ["", null] } };
+  } else {
+    //  If running in development mode - only run against these accounts
+    query = {
+      email: { $in: ["andy.birks@gmail.com", "andrew@purplecs.com", null] },
+      'profile.uprn': { $nin: ["", null] }
+    };
+  }
+
   User.find(query).then((users) => {
     // Perform an action for all the users
     users.map(async function checkCollectionStatus(user) {
@@ -189,7 +201,19 @@ const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
 
 //  Manually run in development
 if (process.env.NODE_ENV === 'development') {
-  // module.exports.checker();
+  // Run this
+  //  module.exports.checker();
+
+
+  // OR this
+  const query = {
+    email: { $in: ["andy.birks@gmail.com", null] },
+    'profile.uprn': { $nin: ["", null] }
+  };
+
+  User.findOne(query).then((user) => {
+    module.exports.notifier(user);
+  });
 }
 
 // Testing Emailer
