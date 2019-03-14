@@ -36,7 +36,7 @@ exports.getNextCollection = async (postcode, uprn) => {
     await RESULTS.$('.refuse-results .panel-heading h2'));
 
   const collectionDateString = await page.evaluate(el => el.innerHTML,
-    await RESULTS.$('.refuse-results .panel-footer p'));
+    await RESULTS.$('.refuse-results .panel-footer h3'));
 
   await browser.close();
 
