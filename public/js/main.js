@@ -21,16 +21,29 @@ $(document).ready(() => {
     e.preventDefault();
 
     const $this = $(this);
-    console.log($this);
-
-    $this.attr('value', 'Please Wait... ');
-    $this.attr('disabled', true);
+    //  console.log($this);
 
     const council = $('#location');
     const postcode = $('#postcode');
     const address = $('#addressDropdown');
     const addressLabel = $('#addressDropdownLabel');
     const btnSubmit = $('#submit');
+
+    //  Don't go further without 2 requirments
+    if (!council.val() || !postcode.val()) {
+      // eslint-disable-next-line no-undef
+      Swal.fire({
+        title: 'Error!',
+        text: 'Please select a Council and enter a Postcode',
+        type: 'error',
+        confirmButtonText: 'Understood'
+      });
+      return false;
+    }
+
+    $this.attr('value', 'Please Wait... ');
+    $this.attr('disabled', true);
+
 
     const data = {};
     data.council = council.val();
@@ -54,8 +67,13 @@ $(document).ready(() => {
       error(data) {
         console.log(data);
 
-        // eslint-disable-next-line no-alert
-        alert(`${data.statusText} ${data.responseJSON.error}`);
+        // eslint-disable-next-line no-undef
+        Swal.fire({
+          title: 'Error!',
+          text: `${data.statusText} ${data.responseJSON.error}`,
+          type: 'error',
+          confirmButtonText: 'Understood'
+        });
       },
       complete() {
         console.log('Done');
@@ -65,7 +83,14 @@ $(document).ready(() => {
     });
   });
 
-  // When the user changes the dropdown - Update the uprn
+  // When the user changes the council dropdown - Clear the address
+  $('#location').change(() => {
+    // console.log(this);
+    document.getElementById('submit').setAttribute('disabled', true);
+    document.getElementById('postcode').value = "";
+    document.getElementById('addressDropdown').innerHTML = "<option value=''>-- Please re-search your address --</option>";
+  });
+  // When the user changes the address dropdown - Update the uprn
   $('#addressDropdown').change(function onChanger() {
     console.log(this);
 
