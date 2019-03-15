@@ -4,9 +4,10 @@
  */
 exports.index = (req, res) => {
   if (req.user) {
-    return res.redirect('/account');
+    return res.redirect("/account");
   }
-  res.render('home', {
-    title: 'Home'
-  });
+  return res.redirect("/signup");
+  // res.render('home', {
+  //   title: 'Home'
+  // });
 };
