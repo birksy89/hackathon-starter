@@ -173,7 +173,7 @@ exports.postUpdateProfile = (req, res, next) => {
         }
         return next(err);
       }
-      req.flash('success', { msg: 'Profile information has been updated.' });
+      req.flash('success', { msg: 'Profile information has been updated. - You will be messaged the day before at 17:30' });
       res.redirect('/account');
     });
   });

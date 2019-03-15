@@ -35,6 +35,7 @@ block content
       .col-md-7
         select.form-control(name='location', id='location' required)
           option(selected disabled value) -- Please Select Option --
+          option(selected=(user.profile.location =='Barnsley')) Barnsley
           option(selected=(user.profile.location =='Darlington')) Darlington
           option(selected=(user.profile.location =='Richmondshire')) Richmondshire
     .form-group.row

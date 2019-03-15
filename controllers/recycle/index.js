@@ -5,6 +5,7 @@ const twilio = require('twilio')(process.env.TWILIO_SID,
 const sgMail = require('@sendgrid/mail');
 const darlington = require('./locations/darlington');
 const richmondshire = require('./locations/richmondshire');
+const barnsley = require('./locations/barnsley');
 const User = require('../../models/User');
 
 
@@ -20,7 +21,7 @@ exports.checker = async () => {
   } else {
     //  If running in development mode - only run against these accounts
     query = {
-      email: { $in: ["andy.birks@gmail.com", "andrew@purplecs.com", null] },
+      email: { $in: ["andy.birks@gmail.com", "andrew@purplecs.com", "a@a.com", null] },
       'profile.uprn': { $nin: ["", null] }
     };
   }
@@ -57,6 +58,9 @@ exports.checker = async () => {
         let nextCollection;
 
         switch (location) {
+          case 'Barnsley':
+            nextCollection = await barnsley.getNextCollection(postcode, uprn);
+            break;
           case 'Darlington':
             nextCollection = await darlington.getNextCollection(postcode, uprn);
             break;
@@ -160,6 +164,9 @@ exports.getAddressFromPostcode = async (req, res, next) => {
     const { council, postcode } = req.body;
     let addresses;
     switch (council) {
+      case 'Barnsley':
+        addresses = await barnsley.getAddressFromPostcode(postcode);
+        break;
       case 'Darlington':
         addresses = await darlington.getAddressFromPostcode(postcode);
         break;
@@ -202,18 +209,22 @@ const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
 //  Manually run in development
 if (process.env.NODE_ENV === 'development') {
   // Run this
-  //  module.exports.checker();
+  // module.exports.checker();
 
+  // Or This
+  // barnsley.getNextCollection('S70 1QE', "100050647260").then((data) => {
+  //   console.log(data);
+  // });
 
   // OR this
-  const query = {
-    email: { $in: ["andy.birks@gmail.com", null] },
-    'profile.uprn': { $nin: ["", null] }
-  };
+  // const query = {
+  //   email: { $in: ["andy.birks@gmail.com", null] },
+  //   'profile.uprn': { $nin: ["", null] }
+  // };
 
-  User.findOne(query).then((user) => {
-    module.exports.notifier(user);
-  });
+  // User.findOne(query).then((user) => {
+  //   module.exports.notifier(user);
+  // });
 }
 
 // Testing Emailer
