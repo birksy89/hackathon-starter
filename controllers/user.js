@@ -159,7 +159,8 @@ exports.postUpdateProfile = (req, res, next) => {
 
     if (user.profile.uprn !== req.body.uprn) {
       // UPRN has changed - And thus any upcoming collections should be wiped
-      // TODO - Rather than wiping at this point, probably should invoke the function to get the data
+      // TODO - Rather than wiping at this point
+      // Probably should invoke the function to get the new data
       user.collections = null;
     }
     user.profile.uprn = req.body.uprn || '';

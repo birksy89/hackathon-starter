@@ -1,13 +1,12 @@
-const moment = require('moment');
-const schedule = require('node-schedule');
-const twilio = require('twilio')(process.env.TWILIO_SID,
+const moment = require("moment");
+const schedule = require("node-schedule");
+const twilio = require("twilio")(process.env.TWILIO_SID,
   process.env.TWILIO_TOKEN);
-const sgMail = require('@sendgrid/mail');
-const darlington = require('./locations/darlington');
-const richmondshire = require('./locations/richmondshire');
-const barnsley = require('./locations/barnsley');
-const User = require('../../models/User');
-
+const sgMail = require("@sendgrid/mail");
+const darlington = require("./locations/darlington");
+const richmondshire = require("./locations/richmondshire");
+const barnsley = require("./locations/barnsley");
+const User = require("../../models/User");
 
 /*
     This is the checker
@@ -15,14 +14,16 @@ const User = require('../../models/User');
 exports.checker = async () => {
   let query;
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     // If running in production - Run against all users who have a "uprn"
-    query = { 'profile.uprn': { $nin: ["", null] } };
+    query = { "profile.uprn": { $nin: ["", null] } };
   } else {
     //  If running in development mode - only run against these accounts
     query = {
-      email: { $in: ["andy.birks@gmail.com", "andrew@purplecs.com", "a@a.com", null] },
-      'profile.uprn': { $nin: ["", null] }
+      email: {
+        $in: ["andy.birks@gmail.com", "andrew@purplecs.com", "a@a.com", null]
+      },
+      "profile.uprn": { $nin: ["", null] }
     };
   }
 
@@ -36,19 +37,24 @@ exports.checker = async () => {
       } = user;
 
       // Check to see how many days till next collection
-      const daysTillCollection = moment(nextCollectionDate).startOf('day').diff(moment().startOf('day'), 'days');
+      const daysTillCollection = moment(nextCollectionDate)
+        .startOf("day")
+        .diff(moment().startOf("day"), "days");
 
       //  If the number returned is >1 - There's more than 1 day left
       if (nextCollectionDate && daysTillCollection > 1) {
-        console.log(`${uprn}/ ${email} -  - Everything's fine... the ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}`);
-      } else
-      //  If the number is 1 - Then probably should send out the notifications
-      if (nextCollectionDate && daysTillCollection === 1) {
+        console.log(`
+        /////////////////
+        ${uprn}/ ${email} -  - Everything's fine
+        The ${nextCollectionType} will be picked up ${moment(nextCollectionDate).fromNow()}
+        /////////////////
+        `);
+      } else if (nextCollectionDate && daysTillCollection === 1) {
+        //  If the number is 1 - Then probably should send out the notifications
         console.log(`${uprn}/ ${email} -  - Collection Date is Tomorrow - Send out Notifications`);
         module.exports.notifier(user);
-      } else
-      //  If the number is 0 - It's the same day and the council haven't updated the "next date"
-      if (nextCollectionDate && daysTillCollection === 0) {
+      } else if (nextCollectionDate && daysTillCollection === 0) {
+        //  If the number is 0 - It's the same day and the council haven't updated the "next date"
         console.log(`${uprn}/ ${email} -  - It's the same day and the council probably haven't updated the "next date" yet - Check back tomorrow`);
       } else {
         //  If the number is <1 - Then the date has passed, and we should try get the "next date"
@@ -58,20 +64,21 @@ exports.checker = async () => {
         let nextCollection;
 
         switch (location) {
-          case 'Barnsley':
+          case "Barnsley":
             nextCollection = await barnsley.getNextCollection(postcode, uprn);
             break;
-          case 'Darlington':
+          case "Darlington":
             nextCollection = await darlington.getNextCollection(postcode, uprn);
             break;
-          case 'Richmondshire':
-            nextCollection = await richmondshire.getNextCollection(postcode, uprn);
+          case "Richmondshire":
+            nextCollection = await richmondshire.getNextCollection(postcode,
+              uprn);
             break;
-          case 'Hambleton':
+          case "Hambleton":
             // TBD
             break;
           default:
-            console.log('No location / Council Available for this user ...');
+            console.log("No location / Council Available for this user ...");
         }
 
         if (nextCollection) {
@@ -85,29 +92,24 @@ exports.checker = async () => {
         }
       }
 
-
       return user;
     });
   });
 };
 
-
 /*
     This is used to notify users
 */
 exports.notifier = async (user) => {
-  let {
-    // eslint-disable-next-line prefer-const
+  const {
     email,
     phone,
-    profile: { location, postcode, uprn },
     collections: { nextCollectionType, nextCollectionDate }
   } = user;
 
-  const friendlyDate = moment(nextCollectionDate).format('dddd, MMMM Do YYYY');
+  const friendlyDate = moment(nextCollectionDate).format("dddd, MMMM Do YYYY");
 
   const messageBody = `Your ${nextCollectionType} will be collected on ${friendlyDate}`;
-
 
   if (phone) {
     console.log(`User has a phone number! It's: ${phone}`);
@@ -115,16 +117,16 @@ exports.notifier = async (user) => {
 
     //  Convert to international phone format
     //  Remove the first "0" and add +44
-    phone = phone.replace(/^0+/, '+44');
+    const phoneIntFormat = phone.replace(/^0+/, "+44");
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       //  If in development mode - Mock message:
       console.log(`DEV: If production would have sent: ${messageBody}`);
     } else {
       // If in production - Actually Send Message:
       const message = {
-        to: phone,
-        from: '+441325952196',
+        to: phoneIntFormat,
+        from: "+441325952196",
         body: messageBody
       };
 
@@ -137,23 +139,20 @@ exports.notifier = async (user) => {
   }
 };
 
-
 exports.notifierEmail = async () => {
   // using SendGrid's v3 Node.js Library
   // https://github.com/sendgrid/sendgrid-nodejs
 
-
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const msg = {
-    to: 'andy.birks@gmail.com',
-    from: 'noreply@andrewbirks.com',
-    subject: 'Recycling Application Notifiation',
-    text: 'Your collection data is soon',
-    html: '<strong>Your collection data is soon :)</strong>',
+    to: "andy.birks@gmail.com",
+    from: "noreply@andrewbirks.com",
+    subject: "Recycling Application Notifiation",
+    text: "Your collection data is soon",
+    html: "<strong>Your collection data is soon :)</strong>"
   };
   sgMail.send(msg);
 };
-
 
 /*
     This is used on the user profile page to lookup their address from a given postcode
@@ -164,20 +163,20 @@ exports.getAddressFromPostcode = async (req, res, next) => {
     const { council, postcode } = req.body;
     let addresses;
     switch (council) {
-      case 'Barnsley':
+      case "Barnsley":
         addresses = await barnsley.getAddressFromPostcode(postcode);
         break;
-      case 'Darlington':
+      case "Darlington":
         addresses = await darlington.getAddressFromPostcode(postcode);
         break;
-      case 'Richmondshire':
+      case "Richmondshire":
         addresses = await richmondshire.getAddressFromPostcode(postcode);
         break;
-      case 'Hambleton':
+      case "Hambleton":
         // TBD
         break;
       default:
-        console.log('No location / Council Selected ...');
+        console.log("No location / Council Selected ...");
     }
 
     const response = req.body;
@@ -202,18 +201,21 @@ exports.getAddressFromPostcode = async (req, res, next) => {
  │    └──────────────────── minute (0 - 59)
 └───────────────────────── second (0 - 59, OPTIONAL)
 */
+// eslint-disable-next-line no-unused-vars
 const j = schedule.scheduleJob({ hour: 17, minute: 30 }, () => {
   module.exports.checker();
 });
 
 //  Manually run in development
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   // Run this
   // module.exports.checker();
 
   // Or This
-  // barnsley.getNextCollection('S70 1QE', "100050647260").then((data) => {
+  // richmondshire.getNextCollection("DL10 7QR", "10034646312").then((data) => {
   //   console.log(data);
+  // }).catch((error) => {
+  //   console.log(`Something went wrong: ${error}`);
   // });
 
   // OR this
