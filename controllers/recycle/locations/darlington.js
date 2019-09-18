@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 exports.getNextCollection = async (postcode, uprn) => {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    // headless: false
+    headless: false
   });
   const page = await browser.newPage();
   await page.goto('https://www.darlington.gov.uk/environment-and-planning/street-scene/weekly-refuse-and-recycling-collection-lookup/');
@@ -18,7 +18,7 @@ exports.getNextCollection = async (postcode, uprn) => {
   await page.keyboard.type(postcode);
   // Go
   await page.click(DOM_POSTCODE_SUBMIT);
-  await page.waitForNavigation();
+  //await page.waitForNavigation();
 
   //  Step 2 - Select Address From Dropdown
   // Register DOM Elements
@@ -28,7 +28,7 @@ exports.getNextCollection = async (postcode, uprn) => {
   await page.select(DOM_ADDRESS, uprn);
   // Go
   await page.click(DOM_ADDRESS_SUBMIT);
-  await page.waitForNavigation();
+  //await page.waitForNavigation();
 
   const RESULTS = await page.$('#detailsDisplay');
 
@@ -70,7 +70,7 @@ exports.getAddressFromPostcode = async (postcode) => {
     await page.keyboard.type(postcode);
     // Go
     await page.click(DOM_POSTCODE_SUBMIT);
-    await page.waitForNavigation();
+    //await page.waitForNavigation();
 
     //  Step 2 - Select Address From Dropdown
     // Register DOM Elements
