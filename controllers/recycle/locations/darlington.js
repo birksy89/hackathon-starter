@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 exports.getNextCollection = async (postcode, uprn) => {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: false
+    headless: true
   });
   const page = await browser.newPage();
   await page.goto('https://www.darlington.gov.uk/environment-and-planning/street-scene/weekly-refuse-and-recycling-collection-lookup/');
